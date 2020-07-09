@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        img {
+            max-width: 600px;
+        }
+    </style>
+</head>
+<body>
+<center>
+<img id="img-of-the-day">
+<script>
+    let query = 'https://api.nasa.gov/planetary/apod?api_key=2UOEKP4Tk1vbdJzzW5ekO6uuZk76MvjbxenaLK2j';
+    let request = new XMLHttpRequest();
+    request.open('GET', query);
+    request.onload = function() {
+        if (request.status === 200) {
+            let response = JSON.parse(request.responseText);
+            document.getElementById('img-of-the-day').setAttribute('src', response.url);
+        }
+    };
+    request.send();
+</script>
+    <br />
+    <br />
+<form method="post">
+    <table border="1">
+        <tbody>
+            <tr>
+                <td>Author:</td>
+                <td><input type="text" name="author" /></td>
+            </tr>
+            <tr>
+                <td>Feedback:</td>
+                <td><input type="text" name="comment" /></td>
+            </tr>
+            <tr>
+                <td>Rate:</td>
+                <td>
+                    <select name="rate" id="rate">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" name="Submit" /></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+    <br />
+    <br />
+
+    <th:block th:each="feedback:${feedbacks}">
+
+        <table border="1">
+            <tbody>
+            <tr>
+                <td>Author:</td>
+                <td th:text="${feedback.getAuthor()}"></td>
+            </tr>
+            <tr>
+                <td>Comment:</td>
+                <td th:text="${feedback.getComment()}"></td>
+            </tr>
+            <tr>
+                <td>Rate:</td>
+                <td th:text="${feedback.getRate()}"></td>
+            </tr>
+            <tr>
+                <td>Reaction(
+                    <th:block th:if="${feedback.getReaction() != null}">
+                        <th:block th:text="${feedback.getReaction().size()}">
+                        </th:block>
+                    </th:block>
+                    ):</td>
+                <td>
+                    <th:block th:if="${feedback.checkReaction('Like') != 0}">Like:
+                        <th:block th:text="${feedback.checkReaction('Like')}">
+                        </th:block> -
+                    </th:block>
+                    <th:block th:if="${feedback.checkReaction('Love') != 0}">Love:
+                        <th:block th:text="${feedback.checkReaction('Love')}">
+                        </th:block> -
+                    </th:block>
+                    <th:block th:if="${feedback.checkReaction('Haha') != 0}">Haha:
+                        <th:block th:text="${feedback.checkReaction('Haha')}">
+                        </th:block> -
+                    </th:block>
+                    <th:block th:if="${feedback.checkReaction('Angry') != 0}">Angry:
+                        <th:block th:text="${feedback.checkReaction('Angry')}">
+                        </th:block> -
+                    </th:block>
+                    <th:block th:if="${feedback.checkReaction('Cry') != 0}">Cry:
+                        <th:block th:text="${feedback.checkReaction('Cry')}">
+                        </th:block> -
+                    </th:block>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a th:href="@{'/reaction?r=Like&id='+${feedback.getId()}}">
+                        <button>Like</button>
+                    </a>
+                    <a th:href="@{'/reaction?r=Love&id='+${feedback.getId()}}">
+                        <button>Love</button>
+                    </a>
+                    <a th:href="@{'/reaction?r=Haha&id='+${feedback.getId()}}">
+                        <button>Haha</button>
+                    </a>
+                    <a th:href="@{'/reaction?r=Angry&id='+${feedback.getId()}}">
+                        <button>Angry</button>
+                    </a>
+                    <a th:href="@{'/reaction?r=Cry&id='+${feedback.getId()}}">
+                        <button>Cry</button>
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br />
+        <br />
+    </th:block>
+
+</center>
+</body>
+</html>
